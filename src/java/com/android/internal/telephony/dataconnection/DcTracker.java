@@ -176,10 +176,10 @@ public class DcTracker extends Handler {
             } );
 
     /** allApns holds all apns */
-    private ArrayList<ApnSetting> mAllApnSettings = null;
+    protected ArrayList<ApnSetting> mAllApnSettings = null;
 
     /** preferred apn */
-    private ApnSetting mPreferredApn = null;
+    protected ApnSetting mPreferredApn = null;
 
     /** Is packet service restricted by network */
     private boolean mIsPsRestricted = false;
@@ -188,7 +188,7 @@ public class DcTracker extends Handler {
     private ApnSetting mEmergencyApn = null;
 
     /* Once disposed dont handle any messages */
-    private boolean mIsDisposed = false;
+    protected boolean mIsDisposed = false;
 
     private ContentResolver mResolver;
 
@@ -457,7 +457,7 @@ public class DcTracker extends Handler {
     private final UiccController mUiccController;
     protected final AtomicReference<IccRecords> mIccRecords = new AtomicReference<IccRecords>();
     private DctConstants.Activity mActivity = DctConstants.Activity.NONE;
-    private DctConstants.State mState = DctConstants.State.IDLE;
+    protected DctConstants.State mState = DctConstants.State.IDLE;
     private final Handler mDataConnectionTracker;
 
     private long mTxPkts;
@@ -489,7 +489,7 @@ public class DcTracker extends Handler {
 
     // When false we will not auto attach and manually attaching is required.
     protected boolean mAutoAttachOnCreationConfig = false;
-    private AtomicBoolean mAutoAttachOnCreation = new AtomicBoolean(false);
+    protected AtomicBoolean mAutoAttachOnCreation = new AtomicBoolean(false);
 
     // State of screen
     // (TODO: Reconsider tying directly to screen, maybe this is
@@ -498,7 +498,7 @@ public class DcTracker extends Handler {
 
     // Indicates if we found mvno-specific APNs in the full APN list.
     // used to determine if we can accept mno-specific APN for tethering.
-    private boolean mMvnoMatched = false;
+    protected boolean mMvnoMatched = false;
 
     /** Allows the generation of unique Id's for DataConnection objects */
     private AtomicInteger mUniqueIdGenerator = new AtomicInteger(0);
@@ -586,6 +586,10 @@ public class DcTracker extends Handler {
     /** MMS Data Profile Device Override */
     private static final int MMS_DATA_PROFILE = SystemProperties.getInt(
             "ro.telephony.mms_data_profile", RILConstants.DATA_PROFILE_DEFAULT);
+
+    public DcTracker(Phone phone) { 
+      this(phone, TransportType.WWAN);
+    }
 
     //***** Constructor
     public DcTracker(Phone phone, int transportType) {
@@ -1416,7 +1420,7 @@ public class DcTracker extends Handler {
         setupDataOnConnectableApns(reason, RetryFailures.ALWAYS);
     }
 
-    private void setupDataOnConnectableApns(String reason, RetryFailures retryFailures) {
+    protected void setupDataOnConnectableApns(String reason, RetryFailures retryFailures) {
         if (VDBG) log("setupDataOnConnectableApns: " + reason);
 
         if (DBG && !VDBG) {
@@ -1581,7 +1585,7 @@ public class DcTracker extends Handler {
      * @return boolean - true if we did cleanup any connections, false if they
      *                   were already all disconnected.
      */
-    private boolean cleanUpAllConnections(boolean tearDown, String reason) {
+    protected boolean cleanUpAllConnections(boolean tearDown, String reason) {
         if (DBG) log("cleanUpAllConnections: tearDown=" + tearDown + " reason=" + reason);
         boolean didDisconnect = false;
         boolean disableMeteredOnly = false;
@@ -1655,7 +1659,7 @@ public class DcTracker extends Handler {
         sendMessage(msg);
     }
 
-    private void cleanUpConnection(boolean tearDown, ApnContext apnContext) {
+    protected void cleanUpConnection(boolean tearDown, ApnContext apnContext) {
         if (apnContext == null) {
             if (DBG) log("cleanUpConnection: apn context is null");
             return;
@@ -1932,7 +1936,7 @@ public class DcTracker extends Handler {
         return apn;
     }
 
-    private ArrayList<ApnSetting> createApnList(Cursor cursor) {
+    protected ArrayList<ApnSetting> createApnList(Cursor cursor) {
         ArrayList<ApnSetting> mnoApns = new ArrayList<ApnSetting>();
         ArrayList<ApnSetting> mvnoApns = new ArrayList<ApnSetting>();
         IccRecords r = mIccRecords.get();
@@ -3346,7 +3350,7 @@ public class DcTracker extends Handler {
         notifyOffApnsOfAvailability(reason);
     }
 
-    private void setDataProfilesAsNeeded() {
+    protected void setDataProfilesAsNeeded() {
         if (DBG) log("setDataProfilesAsNeeded");
         if (mAllApnSettings != null && !mAllApnSettings.isEmpty()) {
             ArrayList<DataProfile> dps = new ArrayList<DataProfile>();
@@ -3416,7 +3420,7 @@ public class DcTracker extends Handler {
         setDataProfilesAsNeeded();
     }
 
-    private void dedupeApnSettings() {
+    protected void dedupeApnSettings() {
         ArrayList<ApnSetting> resultApns = new ArrayList<ApnSetting>();
 
         // coalesce APNs if they are similar enough to prevent
@@ -3644,7 +3648,7 @@ public class DcTracker extends Handler {
         return result.toString();
     }
 
-    private void setPreferredApn(int pos) {
+    protected void setPreferredApn(int pos) {
         if (!mCanSetPreferApn) {
             log("setPreferredApn: X !canSEtPreferApn");
             return;
@@ -3664,7 +3668,7 @@ public class DcTracker extends Handler {
         }
     }
 
-    private ApnSetting getPreferredApn() {
+    protected ApnSetting getPreferredApn() {
         if (mAllApnSettings == null || mAllApnSettings.isEmpty()) {
             log("getPreferredApn: mAllApnSettings is " + ((mAllApnSettings == null)?"null":"empty"));
             return null;
@@ -4396,7 +4400,7 @@ public class DcTracker extends Handler {
     /**
      * Add the Emergency APN settings to APN settings list
      */
-    private void addEmergencyApnSetting() {
+    protected void addEmergencyApnSetting() {
         if(mEmergencyApn != null) {
             if(mAllApnSettings == null) {
                 mAllApnSettings = new ArrayList<ApnSetting>();
@@ -4435,7 +4439,7 @@ public class DcTracker extends Handler {
         return true;
     }
 
-    private void cleanUpConnectionsOnUpdatedApns(boolean tearDown, String reason) {
+    protected void cleanUpConnectionsOnUpdatedApns(boolean tearDown, String reason) {
         if (DBG) log("cleanUpConnectionsOnUpdatedApns: tearDown=" + tearDown);
         if (mAllApnSettings != null && mAllApnSettings.isEmpty()) {
             cleanUpAllConnections(tearDown, Phone.REASON_APN_CHANGED);
