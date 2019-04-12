@@ -55,6 +55,8 @@ public class QtiImsUtils {
     public static final int DOMAIN_CS = 1;
     public static final int DOMAIN_PS = 2;
 
+    public static final String EXTRA_EMERGENCY_SERVICE_CATEGORY = "EmergencyServiceCategory";
+
     // RTT Off
     public static final int RTT_MODE_DISABLED = 0;
 
