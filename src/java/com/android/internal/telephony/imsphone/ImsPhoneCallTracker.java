@@ -302,7 +302,6 @@ public class ImsPhoneCallTracker extends CallTracker implements ImsPullCall {
     private static final int EVENT_REDIAL_WIFI_E911_TIMEOUT = 29;
     private static final int EVENT_ANSWER_WAITING_CALL = 30;
     private static final int EVENT_RESUME_NOW_FOREGROUND_CALL = 31;
-
     private static final int EVENT_REDIAL_WITHOUT_RTT = 32;
 
     private static final int TIMEOUT_HANGUP_PENDINGMO = 500;
